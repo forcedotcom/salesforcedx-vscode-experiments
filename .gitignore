@@ -1,7 +1,7 @@
 # -- CLEAN
 
-# use yarn by default, so ignore npm
-package-lock.json
+# use npm by default, so ignore yarn
+yarn.lock
 
 # never checkin npm config
 .npmrc
