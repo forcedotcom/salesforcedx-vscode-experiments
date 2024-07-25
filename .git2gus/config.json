@@ -1,4 +1,14 @@
 {
-  "productTag": "ADD_YOUR_PRODUCT_TAG",
-  "defaultBuild": "offcore.tooling.54"
+  "productTag": "a1aEE000000dLNxYAM",
+  "issueTypeLabels": {
+    "feature": "USER STORY",
+    "type:bug": "BUG P3",
+    "type:security": "BUG P2",
+    "type:feedback": "",
+    "status:duplicate": "",
+    "type:community-contrib": "USER STORY"
+  },
+  "defaultBuild": "offcore.tooling.61",
+  "hideWorkItemUrl": "true",
+  "statusWhenClosed": "CLOSED"
 }

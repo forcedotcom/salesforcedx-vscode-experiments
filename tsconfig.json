@@ -1,9 +1,13 @@
 {
-  "extends": "@salesforce/dev-config/tsconfig-strict",
   "compilerOptions": {
-    "outDir": "./lib",
-    "strictNullChecks": true,
-    "plugins": [{ "transform": "@salesforce/core/lib/messageTransformer", "import": "messageTransformer" }]
-  },
-  "include": ["src/**/*.ts"]
+    "module": "Node16",
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "outDir": "out",
+    "sourceMap": true,
+    "declaration": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "strict": true
+  }
 }

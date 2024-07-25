@@ -5,11 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  **/
 
-export class Hello {
-  public constructor() {}
-
-  public greet(name: string): string {
-    const greeting = `Hello, ${name}!`;
-    return greeting;
-  }
-}
+// eslint-disable-next-line no-undef
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  testMatch: ['**/(unit)/**/?(*.)+(spec|test).[t]s?(x)'],
+  resetMocks: true,
+};

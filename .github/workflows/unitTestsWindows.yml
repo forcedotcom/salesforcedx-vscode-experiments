@@ -1,0 +1,29 @@
+name: Unit Tests Linux
+on:
+  workflow_call:
+    inputs:
+      branch-name:
+        description: Branch name to run this workflow on
+        required: false
+        default: ${{ github.ref_name }}
+        type: string
+
+jobs:
+  linux-unit-tests:
+    strategy:
+      matrix:
+        node_version: [lts/-1, lts/*]
+      fail-fast: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch-name }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - run: npm ci
+      - run: npm run compile
+      - run: npm run test
