@@ -15,14 +15,3 @@ jobs:
     needs: linux-unit-tests
     uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@main
 
-  # Uncomment to enable NUT testing in Github Actions
-  # nuts:
-  #   needs: linux-unit-tests
-  #   uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
-  #   secrets: inherit
-  #   strategy:
-  #     matrix:
-  #       os: [ubuntu-latest, windows-latest]
-  #     fail-fast: false
-  #   with:
-  #     os: ${{ matrix.os }}
