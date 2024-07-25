@@ -1,7 +1,7 @@
 {
   "name": "@salesforce/salesforcedx-vscode-experiments",
   "version": "0.0.1",
-  "description": "Libraray for supporting experiments in VSCode Extensions",
+  "description": "Library for supporting experiments in VSCode Extensions",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "BSD-3-Clause",
