@@ -24,7 +24,3 @@ export interface IExperimentService {
   registerExperiments(context: vscode.ExtensionContext, experiments: Experiment[]): void;
   getExperiments(): Experiment[];
 }
-
-export interface IAssignmentService {
-  isAssigned(experiment: Experiment): boolean;
-}
