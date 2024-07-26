@@ -1,14 +1,14 @@
 {
-    "plugins": ["jest-formatting"],
-    "extends": ["plugin:jest-formatting/strict"],
-    "rules": {
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/naming-convention": [
-        "warn",
-        {
-          "selector": "class",
-          "format": ["PascalCase"]
-        }
-      ]
-    }
+  "plugins": ["jest-formatting"],
+  "extends": ["plugin:jest-formatting/strict"],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/naming-convention": [
+      "warn",
+      {
+        "selector": "class",
+        "format": ["PascalCase"]
+      }
+    ]
   }
+}

@@ -21,5 +21,7 @@ module.exports = {
     '@typescript-eslint/no-empty-function': 'off',
     // Easily return a promise in a mocked method.
     '@typescript-eslint/require-await': 'off',
+    // Allow for the use of any in tests.
+    '@typescript-eslint/no-explicit-any': 'off',
   },
 };
