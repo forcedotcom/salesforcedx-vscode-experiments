@@ -9,23 +9,23 @@ import * as vscode from 'vscode';
 import { ExperimentType, getExperimentService } from '../../src';
 
 describe('ExperimentService', () => {
-    it('should register and return experiments', () => {
-        const experiments = [
-            {
-                id: '1',
-                name: 'Experiment1',
-                type: ExperimentType.Stateful,
-                distributionPercent: 50,
-            },
-            {
-                id: '2',
-                name: 'Experiment2',
-                type: ExperimentType.Transactional,
-                distributionPercent: 50,
-            },
-        ];
-        const experimentService = getExperimentService();
-        experimentService.registerExperiments({} as vscode.ExtensionContext, experiments);
-        expect(experimentService.getExperiments()).toEqual(experiments);
-    });
+  it('should register and return experiments', () => {
+    const experiments = [
+      {
+        id: '1',
+        name: 'Experiment1',
+        type: ExperimentType.Stateful,
+        distributionPercent: 50
+      },
+      {
+        id: '2',
+        name: 'Experiment2',
+        type: ExperimentType.Transactional,
+        distributionPercent: 50
+      }
+    ];
+    const experimentService = getExperimentService();
+    experimentService.registerExperiments({} as vscode.ExtensionContext, experiments);
+    expect(experimentService.getExperiments()).toEqual(experiments);
+  });
 });

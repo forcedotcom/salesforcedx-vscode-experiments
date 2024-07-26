@@ -9,29 +9,29 @@ import * as vscode from 'vscode';
 import { Experiment, IExperimentService } from './api';
 
 class ExperimentService implements IExperimentService {
-    private experiments: Experiment[] = [];
+  private experiments: Experiment[] = [];
 
-    private static instance: ExperimentService;
+  private static instance: ExperimentService;
 
-    public static getInstance(): ExperimentService {
-        if (!ExperimentService.instance) {
-            ExperimentService.instance = new ExperimentService();
-        }
-
-        return ExperimentService.instance;
+  public static getInstance(): ExperimentService {
+    if (!ExperimentService.instance) {
+      ExperimentService.instance = new ExperimentService();
     }
 
-    private constructor() {}
+    return ExperimentService.instance;
+  }
 
-    registerExperiments(context: vscode.ExtensionContext, experiments: Experiment[]): void {
-        this.experiments = experiments;
-    }
+  private constructor() {}
 
-    getExperiments(): Experiment[] {
-        return this.experiments;
-    }
+  registerExperiments(context: vscode.ExtensionContext, experiments: Experiment[]): void {
+    this.experiments = experiments;
+  }
+
+  getExperiments(): Experiment[] {
+    return this.experiments;
+  }
 }
 
 export function getExperimentService(): IExperimentService {
-    return ExperimentService.getInstance();
+  return ExperimentService.getInstance();
 }

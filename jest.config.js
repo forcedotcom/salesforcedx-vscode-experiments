@@ -8,6 +8,7 @@
 // eslint-disable-next-line no-undef
 module.exports = {
   preset: 'ts-jest',
+  setupFilesAfterEnv: ['./scripts/setup-jest.ts'],
   testEnvironment: 'node',
   testMatch: ['**/(unit)/**/?(*.)+(spec|test).[t]s?(x)'],
   resetMocks: true,

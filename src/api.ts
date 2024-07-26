@@ -8,20 +8,19 @@
 import * as vscode from 'vscode';
 
 export enum ExperimentType {
-    Transactional = 'transactional',
-    Stateful = 'stateful',
+  Transactional = 'transactional',
+  Stateful = 'stateful'
 }
 
 export interface Experiment {
-    id: string;
-    name: string;
-    type: ExperimentType;
-    distributionPercent: number;
-    expirationDate?: string;
+  id: string;
+  name: string;
+  type: ExperimentType;
+  distributionPercent: number;
+  expirationDate?: string;
 }
 
 export interface IExperimentService {
-    registerExperiments(context: vscode.ExtensionContext, experiments: Experiment[]): void;
-    getExperiments(): Experiment[];
-
+  registerExperiments(context: vscode.ExtensionContext, experiments: Experiment[]): void;
+  getExperiments(): Experiment[];
 }
