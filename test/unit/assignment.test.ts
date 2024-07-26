@@ -5,8 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  **/
 
-import { ExperimentType, randomAssignment, setAssignmentService, getAssignmentService } from '../../src';
-import { DefaultAssignmentService } from '../../src/internals/defaultAssignmentService';
+import { ExperimentType, randomAssignment } from '../../src';
 
 describe('randomAssignment', () => {
   it('should return true if random number is less than distribution percent', () => {
@@ -35,23 +34,5 @@ describe('randomAssignment', () => {
     const result = randomAssignment(experiment);
 
     expect(result).toBe(false);
-  });
-});
-
-describe('setAssignmentService', () => {
-  it('should set the assignment service', () => {
-    const assignmentService = {
-      isAssigned: jest.fn()
-    };
-
-    setAssignmentService(assignmentService);
-
-    expect(getAssignmentService()).toBe(assignmentService);
-  });
-
-  it('should return the default assignment service if no service is provided', () => {
-    setAssignmentService();
-
-    expect(getAssignmentService()).toBeInstanceOf(DefaultAssignmentService);
   });
 });
