@@ -11,7 +11,6 @@ describe('randomAssignment', () => {
   it('should return true if random number is less than distribution percent', () => {
     jest.spyOn(Math, 'random').mockReturnValue(0.25);
     const experiment = {
-      id: '1',
       name: 'Experiment1',
       type: ExperimentType.Transactional,
       distributionPercent: 50
@@ -25,7 +24,6 @@ describe('randomAssignment', () => {
   it('should return false if random number is greater than distribution percent', () => {
     jest.spyOn(Math, 'random').mockReturnValue(0.75);
     const experiment = {
-      id: '1',
       name: 'Experiment1',
       type: ExperimentType.Transactional,
       distributionPercent: 50

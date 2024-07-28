@@ -13,7 +13,6 @@ export enum ExperimentType {
 }
 
 export interface Experiment {
-  id: string;
   name: string;
   type: ExperimentType;
   distributionPercent: number;
