@@ -22,8 +22,19 @@ describe('ExperimentService', () => {
         distributionPercent: 50
       }
     ];
+    const expected = [
+      {
+        ...experiments[0],
+        status: 'active'
+      },
+      {
+        ...experiments[1],
+        status: 'active'
+      }
+    ];
     const experimentService = getExperimentService();
     experimentService.registerExperiments({} as vscode.ExtensionContext, experiments);
-    expect(experimentService.getExperiments()).toEqual(experiments);
+
+    expect(experimentService.getExperiments()).toEqual(expected);
   });
 });

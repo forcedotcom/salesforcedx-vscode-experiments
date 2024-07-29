@@ -7,7 +7,7 @@
 
 import * as vscode from 'vscode';
 import { Experiment, ExperimentType } from '../api';
-import { randomAssignment } from './assignment';
+import { isExpired, randomAssignment } from './utils';
 
 export type ExperimentState = {
   [key: string]: boolean;
@@ -34,7 +34,7 @@ export class ExperimentStateManager {
         if (this.stateCache[experiment.name] === undefined) {
           this.stateCache[experiment.name] = randomAssignment(experiment);
         }
-        if (this.isExpired(experiment.expirationDate)) {
+        if (isExpired(experiment.expirationDate)) {
           this.stateCache[experiment.name] = false;
         }
       });
@@ -43,7 +43,7 @@ export class ExperimentStateManager {
   }
 
   getExperimentState(experiment: Experiment): boolean {
-    if (this.isExpired(experiment.expirationDate)) {
+    if (isExpired(experiment.expirationDate)) {
       return false;
     }
     // check if the experiment has been assigned
@@ -51,13 +51,5 @@ export class ExperimentStateManager {
       return this.stateCache[experiment.name];
     }
     return randomAssignment(experiment);
-  }
-
-  private isExpired(expirationDate?: string): boolean {
-    if (!expirationDate) {
-      return false;
-    }
-    const date = new Date(expirationDate);
-    return date < new Date();
   }
 }

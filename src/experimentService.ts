@@ -6,7 +6,8 @@
  **/
 
 import * as vscode from 'vscode';
-import { Experiment, IExperimentService } from './api';
+import { Experiment, ExperimentWithStatus, IExperimentService } from './api';
+import { getExperimentStatus } from './internals/utils';
 
 class ExperimentService implements IExperimentService {
   private experiments: Experiment[] = [];
@@ -27,8 +28,13 @@ class ExperimentService implements IExperimentService {
     this.experiments = experiments;
   }
 
-  getExperiments(): Experiment[] {
-    return this.experiments;
+  getExperiments(): ExperimentWithStatus[] {
+    return this.experiments.map((experiment) => {
+      return {
+        ...experiment,
+        status: getExperimentStatus(experiment)
+      };
+    });
   }
 }
 
