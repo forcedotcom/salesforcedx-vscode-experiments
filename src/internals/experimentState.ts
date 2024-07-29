@@ -24,7 +24,7 @@ export class ExperimentStateManager {
     this.stateCache = {};
   }
 
-  async assignExperiements(experiments: Experiment[]): Promise<void> {
+  async assignExperiments(experiments: Experiment[]): Promise<void> {
     this.stateCache = this.context.globalState.get<ExperimentState>(EXPERIMENT_STATE_KEY) || {};
 
     // assign all unassigned stateful experiments

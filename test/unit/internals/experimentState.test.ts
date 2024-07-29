@@ -37,7 +37,7 @@ describe('ExperimentStateManager', () => {
       }
     ];
     const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
-    await experimentStateManager.assignExperiements(experiments);
+    await experimentStateManager.assignExperiments(experiments);
 
     expect(context.globalState.update).toHaveBeenCalledWith(EXPERIMENT_STATE_KEY, {
       Experiment1: true
@@ -58,7 +58,7 @@ describe('ExperimentStateManager', () => {
       }
     ];
     const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
-    await experimentStateManager.assignExperiements(experiments);
+    await experimentStateManager.assignExperiments(experiments);
 
     expect(context.globalState.update).toHaveBeenCalledWith(EXPERIMENT_STATE_KEY, {
       Experiment1: true
@@ -85,7 +85,7 @@ describe('ExperimentStateManager', () => {
       }
     ];
     const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
-    await experimentStateManager.assignExperiements(experiments);
+    await experimentStateManager.assignExperiments(experiments);
 
     expect(context.globalState.update).toHaveBeenCalledWith(EXPERIMENT_STATE_KEY, {
       Experiment1: false,
