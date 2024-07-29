@@ -12,13 +12,11 @@ describe('ExperimentService', () => {
   it('should register and return experiments', () => {
     const experiments = [
       {
-        id: '1',
         name: 'Experiment1',
         type: ExperimentType.Stateful,
         distributionPercent: 50
       },
       {
-        id: '2',
         name: 'Experiment2',
         type: ExperimentType.Transactional,
         distributionPercent: 50
