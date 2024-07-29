@@ -12,14 +12,23 @@ export enum ExperimentType {
   Stateful = 'stateful'
 }
 
-export interface Experiment {
+export enum ExperimentStatus {
+  Active = 'active',
+  Expired = 'expired'
+}
+
+export interface ExperimentDefinition {
   name: string;
   type: ExperimentType;
   distributionPercent: number;
   expirationDate?: string;
 }
 
+export interface Experiment extends ExperimentDefinition {
+  status: ExperimentStatus;
+}
+
 export interface IExperimentService {
-  registerExperiments(context: vscode.ExtensionContext, experiments: Experiment[]): void;
+  registerExperiments(context: vscode.ExtensionContext, experiments: ExperimentDefinition[]): void;
   getExperiments(): Experiment[];
 }

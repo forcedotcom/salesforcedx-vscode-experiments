@@ -6,8 +6,8 @@
  **/
 
 import * as vscode from 'vscode';
-import { Experiment, ExperimentType } from '../api';
-import { randomAssignment } from './assignment';
+import { ExperimentDefinition, ExperimentType } from '../api';
+import { isExpired, randomAssignment } from './utils';
 
 export type ExperimentState = {
   [key: string]: boolean;
@@ -24,7 +24,7 @@ export class ExperimentStateManager {
     this.stateCache = {};
   }
 
-  async assignExperiments(experiments: Experiment[]): Promise<void> {
+  async assignExperiments(experiments: ExperimentDefinition[]): Promise<void> {
     this.stateCache = this.context.globalState.get<ExperimentState>(EXPERIMENT_STATE_KEY) || {};
 
     // assign all unassigned stateful experiments
@@ -34,7 +34,7 @@ export class ExperimentStateManager {
         if (this.stateCache[experiment.name] === undefined) {
           this.stateCache[experiment.name] = randomAssignment(experiment);
         }
-        if (this.isExpired(experiment.expirationDate)) {
+        if (isExpired(experiment.expirationDate)) {
           this.stateCache[experiment.name] = false;
         }
       });
@@ -42,8 +42,8 @@ export class ExperimentStateManager {
     await this.context.globalState.update(EXPERIMENT_STATE_KEY, this.stateCache);
   }
 
-  getExperimentState(experiment: Experiment): boolean {
-    if (this.isExpired(experiment.expirationDate)) {
+  getExperimentState(experiment: ExperimentDefinition): boolean {
+    if (isExpired(experiment.expirationDate)) {
       return false;
     }
     // check if the experiment has been assigned
@@ -51,13 +51,5 @@ export class ExperimentStateManager {
       return this.stateCache[experiment.name];
     }
     return randomAssignment(experiment);
-  }
-
-  private isExpired(expirationDate?: string): boolean {
-    if (!expirationDate) {
-      return false;
-    }
-    const date = new Date(expirationDate);
-    return date < new Date();
   }
 }

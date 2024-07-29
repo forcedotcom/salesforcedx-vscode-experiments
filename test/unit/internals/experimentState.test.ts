@@ -6,11 +6,9 @@
  **/
 
 import * as vscode from 'vscode';
-import * as Assignment from '../../../src/internals/assignment';
+import * as Utils from '../../../src/internals/utils';
 import { ExperimentType } from '../../../src';
 import { EXPERIMENT_STATE_KEY, ExperimentStateManager } from '../../../src/internals/experimentState';
-
-jest.mock('../../../src/internals/assignment');
 
 const context = {
   globalState: {
@@ -22,7 +20,7 @@ const context = {
 describe('ExperimentStateManager', () => {
   it('should assign stateful and not transactional experiments', async () => {
     context.globalState.get.mockReturnValue({});
-    jest.spyOn(Assignment, 'randomAssignment').mockReturnValue(true);
+    jest.spyOn(Utils, 'randomAssignment').mockReturnValue(true);
 
     const experiments = [
       {
@@ -48,7 +46,7 @@ describe('ExperimentStateManager', () => {
     context.globalState.get.mockReturnValue({
       Experiment1: true
     });
-    jest.spyOn(Assignment, 'randomAssignment');
+    jest.spyOn(Utils, 'randomAssignment');
 
     const experiments = [
       {
@@ -63,12 +61,12 @@ describe('ExperimentStateManager', () => {
     expect(context.globalState.update).toHaveBeenCalledWith(EXPERIMENT_STATE_KEY, {
       Experiment1: true
     });
-    expect(Assignment.randomAssignment).not.toHaveBeenCalled();
+    expect(Utils.randomAssignment).not.toHaveBeenCalled();
   });
 
   it('should always assign expired experiments to false', async () => {
     context.globalState.get.mockReturnValue({});
-    jest.spyOn(Assignment, 'randomAssignment').mockReturnValue(true);
+    jest.spyOn(Utils, 'randomAssignment').mockReturnValue(true);
 
     const experiments = [
       {
@@ -107,7 +105,7 @@ describe('ExperimentStateManager', () => {
   });
 
   it('should get random transactional experiment state', () => {
-    jest.spyOn(Assignment, 'randomAssignment').mockReturnValue(true);
+    jest.spyOn(Utils, 'randomAssignment').mockReturnValue(true);
 
     const experiment = {
       name: 'Experiment1',
@@ -117,7 +115,7 @@ describe('ExperimentStateManager', () => {
     const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
     const result = experimentStateManager.getExperimentState(experiment);
 
-    expect(Assignment.randomAssignment).toHaveBeenCalledWith(experiment);
+    expect(Utils.randomAssignment).toHaveBeenCalledWith(experiment);
     expect(result).toBe(true);
   });
 
