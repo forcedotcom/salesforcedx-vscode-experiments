@@ -6,7 +6,7 @@
  **/
 
 import * as vscode from 'vscode';
-import { Experiment, ExperimentType } from '../api';
+import { ExperimentDefinition, ExperimentType } from '../api';
 import { isExpired, randomAssignment } from './utils';
 
 export type ExperimentState = {
@@ -24,7 +24,7 @@ export class ExperimentStateManager {
     this.stateCache = {};
   }
 
-  async assignExperiments(experiments: Experiment[]): Promise<void> {
+  async assignExperiments(experiments: ExperimentDefinition[]): Promise<void> {
     this.stateCache = this.context.globalState.get<ExperimentState>(EXPERIMENT_STATE_KEY) || {};
 
     // assign all unassigned stateful experiments
@@ -42,7 +42,7 @@ export class ExperimentStateManager {
     await this.context.globalState.update(EXPERIMENT_STATE_KEY, this.stateCache);
   }
 
-  getExperimentState(experiment: Experiment): boolean {
+  getExperimentState(experiment: ExperimentDefinition): boolean {
     if (isExpired(experiment.expirationDate)) {
       return false;
     }

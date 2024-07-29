@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  **/
 
-import { Experiment, ExperimentStatus } from '../api';
+import { ExperimentDefinition, ExperimentStatus } from '../api';
 
 export function isExpired(expirationDate?: string): boolean {
   if (!expirationDate) {
@@ -15,11 +15,11 @@ export function isExpired(expirationDate?: string): boolean {
   return date < new Date();
 }
 
-export function getExperimentStatus(experiment: Experiment): ExperimentStatus {
+export function getExperimentStatus(experiment: ExperimentDefinition): ExperimentStatus {
   return isExpired(experiment.expirationDate) ? ExperimentStatus.Expired : ExperimentStatus.Active;
 }
 
-export function randomAssignment(experiment: Experiment): boolean {
+export function randomAssignment(experiment: ExperimentDefinition): boolean {
   const rand = Math.random() * 100;
   return rand < experiment.distributionPercent;
 }

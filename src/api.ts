@@ -17,18 +17,18 @@ export enum ExperimentStatus {
   Expired = 'expired'
 }
 
-export interface Experiment {
+export interface ExperimentDefinition {
   name: string;
   type: ExperimentType;
   distributionPercent: number;
   expirationDate?: string;
 }
 
-export interface ExperimentWithStatus extends Experiment {
+export interface Experiment extends ExperimentDefinition {
   status: ExperimentStatus;
 }
 
 export interface IExperimentService {
-  registerExperiments(context: vscode.ExtensionContext, experiments: Experiment[]): void;
-  getExperiments(): ExperimentWithStatus[];
+  registerExperiments(context: vscode.ExtensionContext, experiments: ExperimentDefinition[]): void;
+  getExperiments(): Experiment[];
 }
