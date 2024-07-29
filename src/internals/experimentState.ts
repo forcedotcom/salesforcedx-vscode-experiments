@@ -17,33 +17,47 @@ export const EXPERIMENT_STATE_KEY = 'vscode.ab.experiments';
 
 export class ExperimentStateManager {
   private context: vscode.ExtensionContext;
+  private stateCache: ExperimentState;
 
   constructor(context: vscode.ExtensionContext) {
     this.context = context;
+    this.stateCache = {};
   }
 
   async assignExperiements(experiments: Experiment[]): Promise<void> {
-    const state: ExperimentState = this.context.globalState.get<ExperimentState>(EXPERIMENT_STATE_KEY) || {};
+    this.stateCache = this.context.globalState.get<ExperimentState>(EXPERIMENT_STATE_KEY) || {};
 
     // assign all unassigned stateful experiments
     experiments
       .filter((experiment) => experiment.type === ExperimentType.Stateful)
       .forEach((experiment) => {
-        if (state[experiment.name] === undefined) {
-          state[experiment.name] = randomAssignment(experiment);
+        if (this.stateCache[experiment.name] === undefined) {
+          this.stateCache[experiment.name] = randomAssignment(experiment);
+        }
+        if (this.isExpired(experiment.expirationDate)) {
+          this.stateCache[experiment.name] = false;
         }
       });
 
-    await this.context.globalState.update(EXPERIMENT_STATE_KEY, state);
+    await this.context.globalState.update(EXPERIMENT_STATE_KEY, this.stateCache);
   }
 
   getExperimentState(experiment: Experiment): boolean {
     // check if the experiment has been assigned
-    const state: ExperimentState = this.context.globalState.get<ExperimentState>(EXPERIMENT_STATE_KEY) || {};
-    if (state[experiment.name] !== undefined) {
-      return state[experiment.name];
+    if (this.stateCache[experiment.name] !== undefined) {
+      return this.stateCache[experiment.name];
     }
-
+    if (this.isExpired(experiment.expirationDate)) {
+      return false;
+    }
     return randomAssignment(experiment);
+  }
+
+  private isExpired(expirationDate?: string): boolean {
+    if (!expirationDate) {
+      return false;
+    }
+    const date = new Date(expirationDate);
+    return date < new Date();
   }
 }
