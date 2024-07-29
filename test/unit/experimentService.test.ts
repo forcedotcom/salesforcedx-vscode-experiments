@@ -6,7 +6,7 @@
  **/
 
 import * as vscode from 'vscode';
-import { ExperimentType, getExperimentService } from '../../src';
+import { ExperimentStatus, ExperimentType, getExperimentService } from '../../src';
 
 describe('ExperimentService', () => {
   it('should register and return experiments', () => {
@@ -25,11 +25,11 @@ describe('ExperimentService', () => {
     const expected = [
       {
         ...experiments[0],
-        status: 'active'
+        status: ExperimentStatus.Active
       },
       {
         ...experiments[1],
-        status: 'active'
+        status: ExperimentStatus.Active
       }
     ];
     const experimentService = getExperimentService();
