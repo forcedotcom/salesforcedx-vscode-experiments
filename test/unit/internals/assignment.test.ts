@@ -5,7 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  **/
 
-import { ExperimentType, randomAssignment } from '../../src';
+import { ExperimentType } from '../../../src';
+import { randomAssignment } from '../../../src/internals/assignment';
 
 describe('randomAssignment', () => {
   it('should return true if random number is less than distribution percent', () => {

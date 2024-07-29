@@ -6,11 +6,11 @@
  **/
 
 import * as vscode from 'vscode';
-import * as Assignment from '../../../src/assignment';
+import * as Assignment from '../../../src/internals/assignment';
 import { ExperimentType } from '../../../src';
 import { EXPERIMENT_STATE_KEY, ExperimentStateManager } from '../../../src/internals/experimentState';
 
-jest.mock('../../../src/assignment');
+jest.mock('../../../src/internals/assignment');
 
 const context = {
   globalState: {

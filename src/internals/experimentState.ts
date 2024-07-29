@@ -7,7 +7,7 @@
 
 import * as vscode from 'vscode';
 import { Experiment, ExperimentType } from '../api';
-import { randomAssignment } from '../assignment';
+import { randomAssignment } from './assignment';
 
 export type ExperimentState = {
   [key: string]: boolean;

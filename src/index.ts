@@ -6,5 +6,4 @@
  **/
 
 export * from './api';
-export * from './assignment';
 export * from './experimentService';
