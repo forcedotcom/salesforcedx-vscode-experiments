@@ -6,7 +6,7 @@
  **/
 
 import * as vscode from 'vscode';
-import { ExperimentType, getExperimentService } from '../../src';
+import { ExperimentStatus, ExperimentType, getExperimentService } from '../../src';
 
 describe('ExperimentService', () => {
   it('should register and return experiments', () => {
@@ -22,8 +22,19 @@ describe('ExperimentService', () => {
         distributionPercent: 50
       }
     ];
+    const expected = [
+      {
+        ...experiments[0],
+        status: ExperimentStatus.Active
+      },
+      {
+        ...experiments[1],
+        status: ExperimentStatus.Active
+      }
+    ];
     const experimentService = getExperimentService();
     experimentService.registerExperiments({} as vscode.ExtensionContext, experiments);
-    expect(experimentService.getExperiments()).toEqual(experiments);
+
+    expect(experimentService.getExperiments()).toEqual(expected);
   });
 });

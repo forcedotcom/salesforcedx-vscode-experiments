@@ -6,10 +6,11 @@
  **/
 
 import * as vscode from 'vscode';
-import { Experiment, IExperimentService } from './api';
+import { ExperimentDefinition, Experiment, IExperimentService } from './api';
+import { getExperimentStatus } from './internals/utils';
 
 class ExperimentService implements IExperimentService {
-  private experiments: Experiment[] = [];
+  private experiments: ExperimentDefinition[] = [];
 
   private static instance: ExperimentService;
 
@@ -23,12 +24,17 @@ class ExperimentService implements IExperimentService {
 
   private constructor() {}
 
-  registerExperiments(context: vscode.ExtensionContext, experiments: Experiment[]): void {
+  registerExperiments(context: vscode.ExtensionContext, experiments: ExperimentDefinition[]): void {
     this.experiments = experiments;
   }
 
   getExperiments(): Experiment[] {
-    return this.experiments;
+    return this.experiments.map((experiment) => {
+      return {
+        ...experiment,
+        status: getExperimentStatus(experiment)
+      };
+    });
   }
 }
 
