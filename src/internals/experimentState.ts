@@ -13,7 +13,7 @@ export type ExperimentState = {
   [key: string]: boolean;
 };
 
-export const EXPERIMENT_STATE_KEY = 'vscode.ab.experiments';
+export const EXPERIMENT_STATE_KEY = 'vscode.salesforcedx.ab.experiments';
 
 export class ExperimentStateManager {
   private context: vscode.ExtensionContext;
