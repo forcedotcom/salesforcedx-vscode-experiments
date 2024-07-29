@@ -43,12 +43,12 @@ export class ExperimentStateManager {
   }
 
   getExperimentState(experiment: Experiment): boolean {
+    if (this.isExpired(experiment.expirationDate)) {
+      return false;
+    }
     // check if the experiment has been assigned
     if (this.stateCache[experiment.name] !== undefined) {
       return this.stateCache[experiment.name];
-    }
-    if (this.isExpired(experiment.expirationDate)) {
-      return false;
     }
     return randomAssignment(experiment);
   }
