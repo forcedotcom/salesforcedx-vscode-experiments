@@ -6,18 +6,17 @@
  **/
 
 import * as vscode from 'vscode';
-import { ExperimentDefinition, ExperimentType } from '../api';
+import { Experiment, ExperimentDefinition, ExperimentState, ExperimentStatus, ExperimentType } from '../api';
 import { isExpired, randomAssignment } from './utils';
 
-export type ExperimentState = {
-  [key: string]: boolean;
-};
+
 
 export const EXPERIMENT_STATE_KEY = 'vscode.salesforcedx.ab.experiments';
 
 export class ExperimentStateManager {
   private context: vscode.ExtensionContext;
   private stateCache: ExperimentState;
+  private experiments: Experiment[] = [];
 
   constructor(context: vscode.ExtensionContext) {
     this.context = context;
@@ -28,21 +27,26 @@ export class ExperimentStateManager {
     this.stateCache = this.context.globalState.get<ExperimentState>(EXPERIMENT_STATE_KEY) || {};
 
     // assign all unassigned stateful experiments
-    experiments
+    const populatedExperiments: Experiment[] = experiments
       .filter((experiment) => experiment.type === ExperimentType.Stateful)
-      .forEach((experiment) => {
+      .map((experiment) => {
+        let status = ExperimentStatus.Disabled;
         if (this.stateCache[experiment.name] === undefined) {
-          this.stateCache[experiment.name] = randomAssignment(experiment);
+          status = randomAssignment(experiment) ? ExperimentStatus.Active : ExperimentStatus.Disabled;
         }
         if (isExpired(experiment.expirationDate)) {
-          this.stateCache[experiment.name] = false;
+          status = ExperimentStatus.Expired;
         }
+        this.stateCache[experiment.name] = status === ExperimentStatus.Active ? true : false;
+        return {...experiment, status};
       });
 
     await this.context.globalState.update(EXPERIMENT_STATE_KEY, this.stateCache);
+    this.experiments = populatedExperiments;
   }
 
   getExperimentState(experiment: ExperimentDefinition): boolean {
+    // Should we adjust this on the fly or used the expired status found on load? 
     if (isExpired(experiment.expirationDate)) {
       return false;
     }
@@ -51,5 +55,13 @@ export class ExperimentStateManager {
       return this.stateCache[experiment.name];
     }
     return randomAssignment(experiment);
+  }
+
+  getExperimentsState(): typeof this.stateCache {
+    return this.stateCache;
+  }
+
+  getExperiments(): typeof this.experiments {
+    return this.experiments;
   }
 }

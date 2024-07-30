@@ -6,11 +6,11 @@
  **/
 
 import * as vscode from 'vscode';
-import { ExperimentDefinition, Experiment, IExperimentService } from './api';
-import { getExperimentStatus } from './internals/utils';
+import { ExperimentDefinition, Experiment, IExperimentService, ExperimentState } from './api';
+import { ExperimentStateManager } from './internals/experimentState';
 
 class ExperimentService implements IExperimentService {
-  private experiments: ExperimentDefinition[] = [];
+  // private experiments: ExperimentDefinition[] = [];
 
   private static instance: ExperimentService;
 
@@ -22,19 +22,32 @@ class ExperimentService implements IExperimentService {
     return ExperimentService.instance;
   }
 
+  stateManager: ExperimentStateManager | undefined;
+
   private constructor() {}
 
-  registerExperiments(context: vscode.ExtensionContext, experiments: ExperimentDefinition[]): void {
-    this.experiments = experiments;
+  async registerExperiments(context: vscode.ExtensionContext, experiments: ExperimentDefinition[]): Promise<void> {
+    this.stateManager =  new ExperimentStateManager(context);
+    await this.stateManager.assignExperiments(experiments);
   }
 
+  // Used to get the populated experiments after registration.
   getExperiments(): Experiment[] {
-    return this.experiments.map((experiment) => {
-      return {
-        ...experiment,
-        status: getExperimentStatus(experiment)
-      };
-    });
+    const result =  this.stateManager?.getExperiments();
+    return result || [];
+  }
+
+  // Used to get the state of all experiments (just booleans by name).  
+  // Will be useful for updating telemetry calls. 
+  getExperimentsState(): ExperimentState {
+    const result =  this.stateManager?.getExperimentsState();
+    return result || {};
+  }
+
+  // Get the current state of a single experiment. 
+  getExperimentState(experiment: ExperimentDefinition): boolean {
+    const result = this.stateManager?.getExperimentState(experiment);
+    return result || false;
   }
 }
 

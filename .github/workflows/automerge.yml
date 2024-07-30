@@ -7,4 +7,6 @@ on:
 jobs:
   automerge:
     uses: salesforcecli/github-workflows/.github/workflows/automerge.yml@main
+    with:
+      GITHUB_TOKEN: ${{ secrets.IDEE_GH_TOKEN }}
     secrets: inherit

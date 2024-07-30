@@ -43,6 +43,9 @@
     "typescript": "^5.4.2",
     "wireit": "^0.14.5"
   },
+  "peerDependencies": {
+    "@types/vscode": "^1.76.0"
+  },
   "publishConfig": {
     "access": "public"
   },
