@@ -9,8 +9,6 @@ import * as vscode from 'vscode';
 import { Experiment, ExperimentDefinition, ExperimentState, ExperimentStatus, ExperimentType } from '../api';
 import { isExpired, randomAssignment } from './utils';
 
-
-
 export const EXPERIMENT_STATE_KEY = 'vscode.salesforcedx.ab.experiments';
 
 export class ExperimentStateManager {
@@ -30,15 +28,17 @@ export class ExperimentStateManager {
     const populatedExperiments: Experiment[] = experiments
       .filter((experiment) => experiment.type === ExperimentType.Stateful)
       .map((experiment) => {
-        let status = ExperimentStatus.Disabled;
+        let status = ExperimentStatus.Active;
+        let state = this.stateCache[experiment.name];
         if (this.stateCache[experiment.name] === undefined) {
-          status = randomAssignment(experiment) ? ExperimentStatus.Active : ExperimentStatus.Disabled;
+          state = randomAssignment(experiment);
         }
         if (isExpired(experiment.expirationDate)) {
           status = ExperimentStatus.Expired;
+          state = false;
         }
-        this.stateCache[experiment.name] = status === ExperimentStatus.Active ? true : false;
-        return {...experiment, status};
+        this.stateCache[experiment.name] = state;
+        return { ...experiment, status, state };
       });
 
     await this.context.globalState.update(EXPERIMENT_STATE_KEY, this.stateCache);
@@ -46,14 +46,15 @@ export class ExperimentStateManager {
   }
 
   getExperimentState(experiment: ExperimentDefinition): boolean {
-    // Should we adjust this on the fly or used the expired status found on load? 
+    // Necessary for transactional experiments
     if (isExpired(experiment.expirationDate)) {
       return false;
     }
-    // check if the experiment has been assigned
+    // check if the experiment has been assigned, should always be true for Stateful experiments
     if (this.stateCache[experiment.name] !== undefined) {
       return this.stateCache[experiment.name];
     }
+    // assign transactional experiments
     return randomAssignment(experiment);
   }
 
