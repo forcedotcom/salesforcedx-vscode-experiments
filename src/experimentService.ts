@@ -6,12 +6,11 @@
  **/
 
 import * as vscode from 'vscode';
-import { ExperimentDefinition, Experiment, IExperimentService } from './api';
-import { getExperimentStatus } from './internals/utils';
+import { ExperimentDefinition, Experiment, IExperimentService, ExperimentState } from './api';
+import { ExperimentStateManager } from './internals/experimentState';
 
+export const REGISTER_FIRST_ERROR = 'You must first register experiments';
 class ExperimentService implements IExperimentService {
-  private experiments: ExperimentDefinition[] = [];
-
   private static instance: ExperimentService;
 
   public static getInstance(): ExperimentService {
@@ -22,19 +21,39 @@ class ExperimentService implements IExperimentService {
     return ExperimentService.instance;
   }
 
+  stateManager: ExperimentStateManager | undefined;
+
   private constructor() {}
 
-  registerExperiments(context: vscode.ExtensionContext, experiments: ExperimentDefinition[]): void {
-    this.experiments = experiments;
+  async registerExperiments(context: vscode.ExtensionContext, experiments: ExperimentDefinition[]): Promise<void> {
+    this.stateManager = new ExperimentStateManager(context);
+    await this.stateManager.assignExperiments(experiments);
   }
 
+  // Used to get the populated experiments after registration.
   getExperiments(): Experiment[] {
-    return this.experiments.map((experiment) => {
-      return {
-        ...experiment,
-        status: getExperimentStatus(experiment)
-      };
-    });
+    if (!this.stateManager) {
+      throw new Error(REGISTER_FIRST_ERROR);
+    }
+    return this.stateManager.getExperiments();
+  }
+
+  // Used to get the state of all experiments (just booleans by name).
+  // Will be useful for updating telemetry calls.
+  getExperimentsState(): ExperimentState {
+    if (!this.stateManager) {
+      throw new Error(REGISTER_FIRST_ERROR);
+    }
+    return this.stateManager.getExperimentsState();
+  }
+
+  // Get the current state of a single experiment.
+  getExperimentState(experiment: ExperimentDefinition): boolean {
+    if (!this.stateManager) {
+      throw new Error(REGISTER_FIRST_ERROR);
+    }
+    const result = this.stateManager.getExperimentState(experiment);
+    return result;
   }
 }
 

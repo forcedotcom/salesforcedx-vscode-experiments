@@ -7,7 +7,7 @@
 
 import * as vscode from 'vscode';
 import * as Utils from '../../../src/internals/utils';
-import { ExperimentType } from '../../../src';
+import { Experiment, ExperimentStatus, ExperimentType } from '../../../src';
 import { EXPERIMENT_STATE_KEY, ExperimentStateManager } from '../../../src/internals/experimentState';
 
 const context = {
@@ -19,7 +19,7 @@ const context = {
 
 describe('ExperimentStateManager', () => {
   it('should assign stateful and not transactional experiments', async () => {
-    context.globalState.get.mockReturnValue({});
+    context.globalState.get.mockReturnValue(undefined);
     jest.spyOn(Utils, 'randomAssignment').mockReturnValue(true);
 
     const experiments = [
@@ -130,5 +130,49 @@ describe('ExperimentStateManager', () => {
     const result = experimentStateManager.getExperimentState(experiment);
 
     expect(result).toBe(false);
+  });
+
+  it('Should default to empty object for state of all experiments.', () => {
+    const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
+    const result = experimentStateManager.getExperimentsState();
+
+    expect(result).toEqual({});
+  });
+
+  it('Should be able to get the state of all experiments.', () => {
+    const expected = {
+      Experiment1: true,
+      Experiment2: false
+    };
+
+    const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
+    (experimentStateManager as any).stateCache = expected;
+    const result = experimentStateManager.getExperimentsState();
+
+    expect(result).toEqual(expected);
+  });
+
+  it('Should be able to get experiments.', () => {
+    const fakeExperiments: Experiment[] = [
+      {
+        name: 'Experiment1',
+        type: ExperimentType.Transactional,
+        distributionPercent: 50,
+        status: ExperimentStatus.Active,
+        state: true
+      }
+    ];
+    const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
+    (experimentStateManager as any).experiments = fakeExperiments;
+    const result = experimentStateManager.getExperiments();
+
+    expect(result).toEqual(fakeExperiments);
+  });
+
+  it('Should default experiments to empty list.', () => {
+    const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
+    const result = experimentStateManager.getExperiments();
+
+    expect(result).toEqual([]);
   });
 });

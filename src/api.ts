@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  **/
 
-import * as vscode from 'vscode';
+import { ExtensionContext } from 'vscode';
 
 export enum ExperimentType {
   Transactional = 'transactional',
@@ -26,9 +26,16 @@ export interface ExperimentDefinition {
 
 export interface Experiment extends ExperimentDefinition {
   status: ExperimentStatus;
+  state: boolean;
 }
 
 export interface IExperimentService {
-  registerExperiments(context: vscode.ExtensionContext, experiments: ExperimentDefinition[]): void;
+  registerExperiments(context: ExtensionContext, experiments: ExperimentDefinition[]): Promise<void>;
   getExperiments(): Experiment[];
+  getExperimentsState(): ExperimentState;
+  getExperimentState(experiment: ExperimentDefinition): boolean;
 }
+
+export type ExperimentState = {
+  [key: string]: boolean;
+};
