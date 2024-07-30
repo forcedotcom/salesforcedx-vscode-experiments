@@ -58,11 +58,11 @@ export class ExperimentStateManager {
     return randomAssignment(experiment);
   }
 
-  getExperimentsState(): typeof this.stateCache {
+  getExperimentsState(): ExperimentState {
     return this.stateCache;
   }
 
-  getExperiments(): typeof this.experiments {
+  getExperiments(): Experiment[] {
     return this.experiments;
   }
 }

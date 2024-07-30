@@ -11,8 +11,6 @@ import { ExperimentStateManager } from './internals/experimentState';
 
 export const REGISTER_FIRST_ERROR = 'You must first register experiments';
 class ExperimentService implements IExperimentService {
-  // private experiments: ExperimentDefinition[] = [];
-
   private static instance: ExperimentService;
 
   public static getInstance(): ExperimentService {
