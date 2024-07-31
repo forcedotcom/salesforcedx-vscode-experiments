@@ -1,3 +1,12 @@
+## [0.1.2](https://github.com/forcedotcom/salesforcedx-vscode-experiments/compare/0.1.1...0.1.2) (2024-07-31)
+
+
+### Bug Fixes
+
+* continue npm push on GHA saga ([#22](https://github.com/forcedotcom/salesforcedx-vscode-experiments/issues/22)) ([ed3c2e4](https://github.com/forcedotcom/salesforcedx-vscode-experiments/commit/ed3c2e495aad1e5523831db968e92aa47677fb54))
+
+
+
 ## [0.1.1](https://github.com/forcedotcom/salesforcedx-vscode-experiments/compare/0.1.0...0.1.1) (2024-07-31)
 
 
