@@ -99,7 +99,7 @@ jobs:
       with:
         node-version-file: '.nvmrc'
         cache: npm
-    - uses: salesforcecli/github-workflows/.github/actions/yarnInstallWithRetries@main
+    - run: npm ci
     - run: npm run build
     - run: npm install -g @salesforce/plugin-release-management
     - name: NPM Release
