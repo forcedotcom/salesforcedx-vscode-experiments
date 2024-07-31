@@ -1,3 +1,12 @@
+## [0.1.3](https://github.com/forcedotcom/salesforcedx-vscode-experiments/compare/0.1.2...0.1.3) (2024-07-31)
+
+
+### Bug Fixes
+
+* whitespace is hard ([#23](https://github.com/forcedotcom/salesforcedx-vscode-experiments/issues/23)) ([50a94ed](https://github.com/forcedotcom/salesforcedx-vscode-experiments/commit/50a94ed81146dcc2bd7e362848f1c23a22b3f570))
+
+
+
 ## [0.1.2](https://github.com/forcedotcom/salesforcedx-vscode-experiments/compare/0.1.1...0.1.2) (2024-07-31)
 
 
