@@ -9,3 +9,22 @@ on:
 jobs:
   pr-validation:
     uses: salesforcecli/github-workflows/.github/workflows/validatePR.yml@main
+  code-quality:
+    strategy:
+      matrix:
+        node_version: [lts/-1]
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.IDEE_GH_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Prettier Check
+        run: npm run format:check
