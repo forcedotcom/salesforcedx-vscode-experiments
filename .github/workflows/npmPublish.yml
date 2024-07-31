@@ -56,30 +56,30 @@ jobs:
       published: ${{ steps.is-published.outputs.published }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.githubTag }}
-    - uses: actions/setup-node@v4
-      with:
-        node-version: ${{ inputs.nodeVersion }}
-    - name: Is published
-      id: is-published
-      run: |
-        RESPONSE=$(npm view .@${{ inputs.githubTag }} version --json --silent || echo "Not published")
-
-        if [ "$RESPONSE" = "\"${{ inputs.githubTag }}\"" ]; then
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.githubTag }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.nodeVersion }}
+      - name: Is published
+        id: is-published
+        run: |
+          RESPONSE=$(npm view .@${{ inputs.githubTag }} version --json --silent || echo "Not published")
+        
+          if [ "$RESPONSE" = "\"${{ inputs.githubTag }}\"" ]; then
             echo "published=true" >> "$GITHUB_OUTPUT"
-        else
-            echo "published=false" >> "$GITHUB_OUTPUT"
-        fi
+          else
+              echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
         env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-    - run: echo "published said ${{ steps.is-published.outputs.published }}"
-    - name: Fail if published
-      if: steps.is-published.outputs.published == 'true'
-      uses: actions/github-script@v7
-      with:
-        script: core.setFailed("The version '${{ inputs.githubTag }}' has already been published to npm")
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: echo "published said ${{ steps.is-published.outputs.published }}"
+      - name: Fail if published
+        if: steps.is-published.outputs.published == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: core.setFailed("The version '${{ inputs.githubTag }}' has already been published to npm")
 
   ctc-open:
     needs: [check-publish]
@@ -92,29 +92,29 @@ jobs:
     if: ${{ always() && needs.check-publish.outputs.published == 'false' && (!inputs.ctc || (inputs.ctc && needs.ctc-open.outputs.changeCaseId)) }}
     runs-on: ${{ inputs.runsOn }}
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.githubTag }}
-    - uses: actions/setup-node@v4
-      with:
-        node-version-file: '.nvmrc'
-        cache: npm
-    - run: npm ci
-    - run: npm run build
-    - run: npm install -g @salesforce/plugin-release-management
-    - name: NPM Release
-      run: |
-        sf-release npm:package:release \
-            --githubtag ${{ inputs.githubTag}} \
-            --npmtag ${{ inputs.tag }} \
-            --no-install \
-            ${{ inputs.dryrun && '--dryrun' || '' }} \
-            ${{ inputs.prerelease && format('--prerelease {0}', github.ref_name) || '' }} \
-            ${{ inputs.sign && '--sign' || '' }}
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.githubTag }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm install -g @salesforce/plugin-release-management
+      - name: NPM Release
+        run: |
+          sf-release npm:package:release \
+              --githubtag ${{ inputs.githubTag}} \
+              --npmtag ${{ inputs.tag }} \
+              --no-install \
+              ${{ inputs.dryrun && '--dryrun' || '' }} \
+              ${{ inputs.prerelease && format('--prerelease {0}', github.ref_name) || '' }} \
+              ${{ inputs.sign && '--sign' || '' }}
         env:
-        NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-        AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-        AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
 
   ctcCloseSuccess:
     needs: [ctc-open, npm-publish]
