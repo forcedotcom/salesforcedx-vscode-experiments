@@ -50,85 +50,85 @@ on:
           description: the github release tag that you want to publish as an npm package
           required: true
           type: string
-  jobs:
-    check-publish:
-      outputs:
-        published: ${{ steps.is-published.outputs.published }}
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-          with:
-            ref: ${{ inputs.githubTag }}
-        - uses: actions/setup-node@v4
-          with:
-            node-version: ${{ inputs.nodeVersion }}
-        - name: Is published
-          id: is-published
-          run: |
-            RESPONSE=$(npm view .@${{ inputs.githubTag }} version --json --silent || echo "Not published")
-  
-            if [ "$RESPONSE" = "\"${{ inputs.githubTag }}\"" ]; then
-              echo "published=true" >> "$GITHUB_OUTPUT"
-            else
-              echo "published=false" >> "$GITHUB_OUTPUT"
-            fi
-          env:
-            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        - run: echo "published said ${{ steps.is-published.outputs.published }}"
-        - name: Fail if published
-          if: steps.is-published.outputs.published == 'true'
-          uses: actions/github-script@v7
-          with:
-            script: core.setFailed("The version '${{ inputs.githubTag }}' has already been published to npm")
-  
-    ctc-open:
-      needs: [check-publish]
-      if: inputs.ctc && needs.check-publish.outputs.published == 'false' && inputs.tag == 'latest'
-      uses: salesforcecli/github-workflows/.github/workflows/ctcOpen.yml@main
-      secrets: inherit
-  
-    npm-publish:
-      needs: [check-publish, ctc-open]
-      if: ${{ always() && needs.check-publish.outputs.published == 'false' && (!inputs.ctc || (inputs.ctc && needs.ctc-open.outputs.changeCaseId)) }}
-      runs-on: ${{ inputs.runsOn }}
-      steps:
-        - uses: actions/checkout@v4
-          with:
-            ref: ${{ inputs.githubTag }}
-        - uses: actions/setup-node@v4
-          with:
-            node-version-file: '.nvmrc'
-            cache: npm
-        - run: npm ci
-        - run: npm run build
-        - run: npm install -g @salesforce/plugin-release-management
-        - name: NPM Release
-          run: |
-            sf-release npm:package:release \
-              --githubtag ${{ inputs.githubTag}} \
-              --npmtag ${{ inputs.tag }} \
-              --no-install \
-              ${{ inputs.dryrun && '--dryrun' || '' }} \
-              ${{ inputs.prerelease && format('--prerelease {0}', github.ref_name) || '' }} \
-              ${{ inputs.sign && '--sign' || '' }}
-          env:
-            NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-            AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-            AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-  
-    ctcCloseSuccess:
-      needs: [ctc-open, npm-publish]
-      if: needs.ctc-open.result == 'success' && needs.npm-publish.result == 'success' && needs.ctc-open.outputs.changeCaseId
-      uses: salesforcecli/github-workflows/.github/workflows/ctcClose.yml@main
-      secrets: inherit
+jobs:
+  check-publish:
+    outputs:
+      published: ${{ steps.is-published.outputs.published }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
       with:
-        changeCaseId: ${{needs.ctc-open.outputs.changeCaseId}}
-  
-    ctcCloseFail:
-      needs: [ctc-open, npm-publish]
-      if: always() && inputs.ctc && needs.ctc-open.outputs.changeCaseId && (needs.ctc-open.result != 'success' || needs.npm-publish.result != 'success')
-      uses: salesforcecli/github-workflows/.github/workflows/ctcClose.yml@main
-      secrets: inherit
+        ref: ${{ inputs.githubTag }}
+    - uses: actions/setup-node@v4
       with:
-        changeCaseId: ${{ needs.ctc-open.outputs.changeCaseId }}
-        status: Not Implemented
+        node-version: ${{ inputs.nodeVersion }}
+    - name: Is published
+      id: is-published
+      run: |
+        RESPONSE=$(npm view .@${{ inputs.githubTag }} version --json --silent || echo "Not published")
+
+        if [ "$RESPONSE" = "\"${{ inputs.githubTag }}\"" ]; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+        else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+        fi
+        env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    - run: echo "published said ${{ steps.is-published.outputs.published }}"
+    - name: Fail if published
+      if: steps.is-published.outputs.published == 'true'
+      uses: actions/github-script@v7
+      with:
+        script: core.setFailed("The version '${{ inputs.githubTag }}' has already been published to npm")
+
+  ctc-open:
+    needs: [check-publish]
+    if: inputs.ctc && needs.check-publish.outputs.published == 'false' && inputs.tag == 'latest'
+    uses: salesforcecli/github-workflows/.github/workflows/ctcOpen.yml@main
+    secrets: inherit
+
+  npm-publish: 
+    needs: [check-publish, ctc-open]
+    if: ${{ always() && needs.check-publish.outputs.published == 'false' && (!inputs.ctc || (inputs.ctc && needs.ctc-open.outputs.changeCaseId)) }}
+    runs-on: ${{ inputs.runsOn }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.githubTag }}
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+        cache: npm
+    - uses: salesforcecli/github-workflows/.github/actions/yarnInstallWithRetries@main
+    - run: npm run build
+    - run: npm install -g @salesforce/plugin-release-management
+    - name: NPM Release
+      run: |
+        sf-release npm:package:release \
+            --githubtag ${{ inputs.githubTag}} \
+            --npmtag ${{ inputs.tag }} \
+            --no-install \
+            ${{ inputs.dryrun && '--dryrun' || '' }} \
+            ${{ inputs.prerelease && format('--prerelease {0}', github.ref_name) || '' }} \
+            ${{ inputs.sign && '--sign' || '' }}
+        env:
+        NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+        AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+        AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+
+  ctcCloseSuccess:
+    needs: [ctc-open, npm-publish]
+    if: needs.ctc-open.result == 'success' && needs.npm-publish.result == 'success' && needs.ctc-open.outputs.changeCaseId
+    uses: salesforcecli/github-workflows/.github/workflows/ctcClose.yml@main
+    secrets: inherit
+    with:
+      changeCaseId: ${{needs.ctc-open.outputs.changeCaseId}}
+
+  ctcCloseFail:
+    needs: [ctc-open, npm-publish]
+    if: always() && inputs.ctc && needs.ctc-open.outputs.changeCaseId && (needs.ctc-open.result != 'success' || needs.npm-publish.result != 'success')
+    uses: salesforcecli/github-workflows/.github/workflows/ctcClose.yml@main
+    secrets: inherit
+    with:
+      changeCaseId: ${{ needs.ctc-open.outputs.changeCaseId }}
+      status: Not Implemented
