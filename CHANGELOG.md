@@ -1,4 +1,13 @@
-# 0.1.0 (2024-07-30)
+## [0.1.1](https://github.com/forcedotcom/salesforcedx-vscode-experiments/compare/0.1.0...0.1.1) (2024-07-31)
+
+
+### Bug Fixes
+
+* space issue in push yml ([#21](https://github.com/forcedotcom/salesforcedx-vscode-experiments/issues/21)) ([819eacc](https://github.com/forcedotcom/salesforcedx-vscode-experiments/commit/819eaccce03a14db0a7b8ab33b61acd8e270075d))
+
+
+
+# [0.1.0](https://github.com/forcedotcom/salesforcedx-vscode-experiments/compare/3691f1f499c3f297359cb70b7e80a4ca323e8dff...0.1.0) (2024-07-30)
 
 
 ### Bug Fixes
