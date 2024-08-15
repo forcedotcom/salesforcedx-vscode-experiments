@@ -17,10 +17,19 @@ export enum ExperimentStatus {
   Expired = 'expired'
 }
 
+/**
+ * Definition of an experiment.
+ * @param name - The unique name of the experiment.
+ * @param type - The type of the experiment.
+ * @param distributionPercent - The percentage of users that should be included in the experiment.
+ * @param overrideSetting - The fully-qualified VSCode setting whose value overriddes the randomly assigned experiment value.
+ * @param expirationDate - The date at which the experiment should be considered expired.
+ */
 export interface ExperimentDefinition {
   name: string;
   type: ExperimentType;
   distributionPercent: number;
+  overrideSetting?: string;
   expirationDate?: string;
 }
 

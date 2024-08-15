@@ -19,6 +19,9 @@ export class ExperimentStateManager {
   constructor(context: vscode.ExtensionContext) {
     this.context = context;
     this.stateCache = {};
+    vscode.workspace.onDidChangeConfiguration(() => {
+      this.processOverrides(this.experiments);
+    });
   }
 
   async assignExperiments(experiments: ExperimentDefinition[]): Promise<void> {
@@ -40,6 +43,8 @@ export class ExperimentStateManager {
         this.stateCache[experiment.name] = state;
         return { ...experiment, status, state };
       });
+
+    this.processOverrides(populatedExperiments);
 
     await this.context.globalState.update(EXPERIMENT_STATE_KEY, this.stateCache);
     this.experiments = populatedExperiments;
@@ -64,5 +69,19 @@ export class ExperimentStateManager {
 
   getExperiments(): Experiment[] {
     return this.experiments;
+  }
+
+  private processOverrides(experiments: Experiment[]): void {
+    if (experiments) {
+      experiments.forEach((experiment) => {
+        if (experiment.overrideSetting && experiment.status === ExperimentStatus.Active) {
+          const override = vscode.workspace.getConfiguration().get<boolean>(experiment.overrideSetting);
+          if (override !== undefined) {
+            experiment.state = override;
+            this.stateCache[experiment.name] = override;
+          }
+        }
+      });
+    }
   }
 }
