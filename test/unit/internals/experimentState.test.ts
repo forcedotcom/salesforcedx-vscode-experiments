@@ -91,7 +91,7 @@ describe('ExperimentStateManager', () => {
     });
   });
 
-  it('should process overrides when assigning experiments', () => {
+  it('should process overrides when assigning experiments', async () => {
     context.globalState.get.mockReturnValue({});
     jest.spyOn(Utils, 'randomAssignment').mockReturnValue(true);
     jest.spyOn(vscode.workspace, 'getConfiguration').mockReturnValue({
@@ -107,7 +107,7 @@ describe('ExperimentStateManager', () => {
       }
     ];
     const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
-    experimentStateManager.assignExperiments(experiments);
+    await experimentStateManager.assignExperiments(experiments);
     const result = experimentStateManager.getExperimentState(experiments[0]);
 
     expect(vscode.workspace.getConfiguration).toHaveBeenCalled();
@@ -215,8 +215,9 @@ describe('ExperimentStateManager', () => {
       }
     ];
     const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
+    (experimentStateManager as any).experiments = experiments;
     (experimentStateManager as any).stateCache = { Experiment1: false };
-    (experimentStateManager as any).processOverrides(experiments);
+    (experimentStateManager as any).processOverrides();
     const result = experimentStateManager.getExperimentState(experiments[0]);
 
     expect(vscode.workspace.getConfiguration).toHaveBeenCalled();
@@ -239,8 +240,9 @@ describe('ExperimentStateManager', () => {
       }
     ];
     const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
+    (experimentStateManager as any).experiments = experiments;
     (experimentStateManager as any).stateCache = { Experiment1: false };
-    (experimentStateManager as any).processOverrides(experiments);
+    (experimentStateManager as any).processOverrides();
     const result = experimentStateManager.getExperimentState(experiments[0]);
 
     expect(vscode.workspace.getConfiguration).not.toHaveBeenCalled();
