@@ -15,12 +15,11 @@ export class ExperimentStateManager {
   private context: vscode.ExtensionContext;
   private stateCache: ExperimentState;
   private experiments: Experiment[] = [];
-  private disposables: vscode.Disposable[] = [];
 
   constructor(context: vscode.ExtensionContext) {
     this.context = context;
     this.stateCache = {};
-    this.disposables.push(vscode.workspace.onDidChangeConfiguration(this.handleConfigurationChange, this));
+    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(this.handleConfigurationChange, this));
   }
 
   async assignExperiments(experiments: ExperimentDefinition[]): Promise<void> {
@@ -69,13 +68,9 @@ export class ExperimentStateManager {
     return this.experiments;
   }
 
-  dispose(): void {
-    this.disposables.forEach((disposable) => disposable.dispose());
-  }
-
   private handleConfigurationChange(): void {
-      this.processOverrides();
-    }
+    this.processOverrides();
+  }
 
   private processOverrides(): void {
     this.experiments.forEach((experiment) => {

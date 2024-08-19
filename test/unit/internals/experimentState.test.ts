@@ -14,6 +14,9 @@ const context = {
   globalState: {
     get: jest.fn(),
     update: jest.fn()
+  },
+  subscriptions: {
+    push: jest.fn()
   }
 };
 
@@ -197,15 +200,6 @@ describe('ExperimentStateManager', () => {
     const result = experimentStateManager.getExperiments();
 
     expect(result).toEqual([]);
-  });
-
-  it('Should dispose of all disposables.', () => {
-    const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
-    const disposables = (experimentStateManager as any).disposables;
-    experimentStateManager.dispose();
-
-    expect(disposables.length).toBe(1);
-    expect(disposables[0].dispose).toHaveBeenCalled();
   });
 
   it('Should handle configuration change.', () => {
