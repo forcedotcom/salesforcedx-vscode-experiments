@@ -14,6 +14,9 @@ const context = {
   globalState: {
     get: jest.fn(),
     update: jest.fn()
+  },
+  subscriptions: {
+    push: jest.fn()
   }
 };
 
@@ -89,6 +92,29 @@ describe('ExperimentStateManager', () => {
       Experiment1: false,
       Experiment2: true
     });
+  });
+
+  it('should process overrides when assigning experiments', async () => {
+    context.globalState.get.mockReturnValue({});
+    jest.spyOn(Utils, 'randomAssignment').mockReturnValue(true);
+    jest.spyOn(vscode.workspace, 'getConfiguration').mockReturnValue({
+      get: jest.fn().mockReturnValue(false)
+    } as any);
+
+    const experiments = [
+      {
+        name: 'Experiment1',
+        type: ExperimentType.Stateful,
+        distributionPercent: 50,
+        overrideSetting: 'test.experiment1'
+      }
+    ];
+    const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
+    await experimentStateManager.assignExperiments(experiments);
+    const result = experimentStateManager.getExperimentState(experiments[0]);
+
+    expect(vscode.workspace.getConfiguration).toHaveBeenCalled();
+    expect(result).toBe(false);
   });
 
   it('should get stateful experiment state from memento', () => {
@@ -174,5 +200,63 @@ describe('ExperimentStateManager', () => {
     const result = experimentStateManager.getExperiments();
 
     expect(result).toEqual([]);
+  });
+
+  it('Should handle configuration change.', () => {
+    const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
+    (experimentStateManager as any).processOverrides = jest.fn();
+    (experimentStateManager as any).handleConfigurationChange();
+
+    expect((experimentStateManager as any).processOverrides).toHaveBeenCalled();
+  });
+
+  it('Should use override setting value if present.', () => {
+    jest.spyOn(vscode.workspace, 'getConfiguration').mockReturnValue({
+      get: jest.fn().mockReturnValue(true)
+    } as any);
+
+    const experiments = [
+      {
+        name: 'Experiment1',
+        type: ExperimentType.Stateful,
+        distributionPercent: 50,
+        overrideSetting: 'test.experiment1',
+        status: ExperimentStatus.Active,
+        state: false
+      }
+    ];
+    const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
+    (experimentStateManager as any).experiments = experiments;
+    (experimentStateManager as any).stateCache = { Experiment1: false };
+    (experimentStateManager as any).processOverrides();
+    const result = experimentStateManager.getExperimentState(experiments[0]);
+
+    expect(vscode.workspace.getConfiguration).toHaveBeenCalled();
+    expect(result).toBe(true);
+  });
+
+  it('Should not override setting if experiment is expired.', () => {
+    jest.spyOn(vscode.workspace, 'getConfiguration').mockReturnValue({
+      get: jest.fn().mockReturnValue(true)
+    } as any);
+
+    const experiments = [
+      {
+        name: 'Experiment1',
+        type: ExperimentType.Stateful,
+        distributionPercent: 50,
+        overrideSetting: 'test.experiment1',
+        status: ExperimentStatus.Expired,
+        state: false
+      }
+    ];
+    const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
+    (experimentStateManager as any).experiments = experiments;
+    (experimentStateManager as any).stateCache = { Experiment1: false };
+    (experimentStateManager as any).processOverrides();
+    const result = experimentStateManager.getExperimentState(experiments[0]);
+
+    expect(vscode.workspace.getConfiguration).not.toHaveBeenCalled();
+    expect(result).toBe(false);
   });
 });

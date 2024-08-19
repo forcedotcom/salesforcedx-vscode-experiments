@@ -21,7 +21,7 @@ class ExperimentService implements IExperimentService {
     return ExperimentService.instance;
   }
 
-  stateManager: ExperimentStateManager | undefined;
+  private stateManager: ExperimentStateManager | undefined;
 
   private constructor() {}
 
