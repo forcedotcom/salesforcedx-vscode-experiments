@@ -1,3 +1,12 @@
+# [0.2.0](https://github.com/forcedotcom/salesforcedx-vscode-experiments/compare/0.1.3...0.2.0) (2024-08-19)
+
+
+### Features
+
+* use setting overrides for feature flags ([ed452cd](https://github.com/forcedotcom/salesforcedx-vscode-experiments/commit/ed452cdeea1f12adbe9852fccd1425527f39f383))
+
+
+
 ## [0.1.3](https://github.com/forcedotcom/salesforcedx-vscode-experiments/compare/0.1.2...0.1.3) (2024-07-31)
 
 
