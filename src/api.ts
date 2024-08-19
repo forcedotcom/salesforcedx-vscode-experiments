@@ -43,6 +43,7 @@ export interface IExperimentService {
   getExperiments(): Experiment[];
   getExperimentsState(): ExperimentState;
   getExperimentState(experiment: ExperimentDefinition): boolean;
+  dispose(): void;
 }
 
 export type ExperimentState = {

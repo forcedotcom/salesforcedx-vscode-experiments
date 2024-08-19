@@ -122,7 +122,9 @@ const getMockVSCode = () => {
           update: jest.fn()
         };
       },
-      onDidChangeConfiguration: jest.fn(),
+      onDidChangeConfiguration: () => ({
+        dispose: jest.fn()
+      }),
       onDidChangeTextDocument: jest.fn(),
       onDidOpenTextDocument: jest.fn(),
       createFileSystemWatcher: jest.fn().mockReturnValue({

@@ -199,6 +199,23 @@ describe('ExperimentStateManager', () => {
     expect(result).toEqual([]);
   });
 
+  it('Should dispose of all disposables.', () => {
+    const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
+    const disposables = (experimentStateManager as any).disposables;
+    experimentStateManager.dispose();
+
+    expect(disposables.length).toBe(1);
+    expect(disposables[0].dispose).toHaveBeenCalled();
+  });
+
+  it('Should handle configuration change.', () => {
+    const experimentStateManager = new ExperimentStateManager(context as any as vscode.ExtensionContext);
+    (experimentStateManager as any).processOverrides = jest.fn();
+    (experimentStateManager as any).handleConfigurationChange();
+
+    expect((experimentStateManager as any).processOverrides).toHaveBeenCalled();
+  });
+
   it('Should use override setting value if present.', () => {
     jest.spyOn(vscode.workspace, 'getConfiguration').mockReturnValue({
       get: jest.fn().mockReturnValue(true)

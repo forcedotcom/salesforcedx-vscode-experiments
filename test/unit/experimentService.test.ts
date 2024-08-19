@@ -42,6 +42,7 @@ describe('ExperimentService', () => {
   let getExperimentsSpy: jest.SpyInstance;
   let getExperimentStateSpy: jest.SpyInstance;
   let getExperimentsStateSpy: jest.SpyInstance;
+  let disposeSpy: jest.SpyInstance;
 
   let experimentServiceInst: IExperimentService;
   beforeEach(() => {
@@ -51,6 +52,7 @@ describe('ExperimentService', () => {
     getExperimentsSpy = mockedExperimentState.prototype.getExperiments.mockReturnValue(fakeExperiments);
     getExperimentStateSpy = mockedExperimentState.prototype.getExperimentState;
     getExperimentsStateSpy = mockedExperimentState.prototype.getExperimentsState.mockReturnValue(fakeExperimentState);
+    disposeSpy = mockedExperimentState.prototype.dispose;
   });
 
   it('should register and return experiments', () => {
@@ -100,5 +102,11 @@ describe('ExperimentService', () => {
     }).toThrow(REGISTER_FIRST_ERROR);
 
     expect(getExperimentsStateSpy).not.toHaveBeenCalled();
+  });
+
+  it('Should dispose of the state manager.', () => {
+    experimentServiceInst.dispose();
+
+    expect(disposeSpy).toHaveBeenCalledTimes(1);
   });
 });

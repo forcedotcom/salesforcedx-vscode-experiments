@@ -55,6 +55,12 @@ class ExperimentService implements IExperimentService {
     const result = this.stateManager.getExperimentState(experiment);
     return result;
   }
+
+  dispose(): void {
+    if (this.stateManager) {
+      this.stateManager.dispose();
+    }
+  }
 }
 
 export function getExperimentService(): IExperimentService {
