@@ -42,7 +42,7 @@
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2",
-    "wireit": "^0.14.7"
+    "wireit": "^0.14.8"
   },
   "peerDependencies": {
     "@types/vscode": "^1.92.0"
